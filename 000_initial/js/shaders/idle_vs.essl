@@ -6,13 +6,13 @@ shaderSource[document.currentScript.src.split('js/shaders/')[1]] = `
 	attribute vec3 vertexNormal;
 	attribute vec3 vertexColor;
 	varying vec3 color;
-	varying vec2 texCoord;
+	//varying vec2 texCoord;
 
 	  	  
 	void main(void) {
 		gl_Position = vec4(vertexPosition, 1)*modelMatrix;
 		color=vertexColor;
-		texCoord=vertexTexCoord;
+		//texCoord=vertexTexCoord;
 	}
 
 `;

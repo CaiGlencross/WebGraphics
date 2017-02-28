@@ -29,10 +29,10 @@ var Scene = function(gl, output) {
 
   // in constructor 
   this.vsTrafo2d = new Shader(gl, gl.VERTEX_SHADER, "idle_vs.essl");
-  this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "blue_fs.essl"); 
+  this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "color_fs.essl"); 
   this.asteroidProgram = new Program(gl, this.vsTrafo2d, this.fsSolid);
 
-  this.texture = new Texture2D(gl, "/Users/caiglencross/Desktop/Shots/Doughnuts.jpg");
+  //this.texture = new Texture2D(gl, "/Users/caiglencross/Desktop/Shots/Doughnuts.jpg");
 
   // vertex buffer
   // this.vertexBuffer = gl.createBuffer();
@@ -157,13 +157,13 @@ Scene.prototype.update = function(gl, keysPressed) {
 
   this.asteroidProgram.commit();
 
-  var textureUniformLocation = gl.getUniformLocation(
-  this.asteroidProgram.glProgram, "colorTexture");
-  if(modelMatrixUniformLocation == null) {
-    console.log("Could not find uniform colorTexture.");
-  } else {
-    this.texture.commit(gl, textureUniformLocation, 0);
-  }
+  // var textureUniformLocation = gl.getUniformLocation(
+  // this.asteroidProgram.glProgram, "colorTexture");
+  // if(modelMatrixUniformLocation == null) {
+  //   console.log("Could not find uniform colorTexture.");
+  // } else {
+  //   this.texture.commit(gl, textureUniformLocation, 0);
+  // }
 
   this.quadGeometry.draw();
 
