@@ -4,37 +4,13 @@ var pendingResources = {};
 
 // App constructor
 var App = function(canvas) {
-
+	this.keysPressed = {};
 	//keys pressed
 	document.onkeydown= function(event){
-		if (event.keyCode == 40){
-			keyboardMap["Down"] = true;
-		}
-		if (event.keyCode == 38){
-			keyboardMap["Up"] = true;
-		}
-		if (event.keyCode == 37){
-			keyboardMap["Left"] = true;
-		}
-		if (event.keyCode == 39){
-			keyboardMap["Right"] = true;
-		}
-
-
+		app.keysPressed[keyboardMap[event.keyCode]]=true;
 	}
 	document.onkeyup = function(event){
-		if (event.keyCode == 40){
-			keyboardMap["Down"] = false;
-		}
-		if (event.keyCode == 38){
-			keyboardMap["Up"] = false;
-		}
-		if (event.keyCode == 37){
-			keyboardMap["Left"] = false;
-		}
-		if (event.keyCode == 39){
-			keyboardMap["Right"] = false;
-		}
+		app.keysPressed[keyboardMap[event.keyCode]]=false;
 	}
 
 	// set a pointer to our canvas
@@ -53,7 +29,18 @@ var App = function(canvas) {
 	this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 
 	// create a simple scene
-	this.scene = new Scene(this.gl);	
+	this.scene = new Scene(this.gl);
+
+	//camera resize shit
+	window.addEventListener('resize', function() {
+	  theApp.canvas.width = this.canvas.clientWidth;
+	  theApp.canvas.height = this.canvas.clientHeight;
+	  theApp.gl.viewport(0, 0,
+	    this.canvas.width, this.canvas.height);
+	  theApp.scene.camera.setAspectRatio(
+	    this.canvas.clientWidth /
+	    this.canvas.clientHeight );
+});	
 }
 
 // animation frame update
@@ -62,7 +49,7 @@ App.prototype.update = function() {
 	var pendingResourceNames = Object.keys(pendingResources);
 	if(pendingResourceNames.length === 0) {
 		// animate and draw scene
-		this.scene.update(this.gl);
+		this.scene.update(this.gl,app.keysPressed);
 		overlay.innerHTML = "Ready.";
 	} else {
 		overlay.innerHTML = "Loading: " + pendingResourceNames;

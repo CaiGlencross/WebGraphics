@@ -1,38 +1,71 @@
 var Scene = function(gl, output) {
 
-  this.quadPosition = {x:0, y:0, z:0};
-  this.quadRotation = 0;
+
+  this.timeAtLastFrame = new Date().getTime();
+
+  this.camera = new OrthoCamera();
+
+  this.gameObjects = [];
+
   this.quadGeometry = new QuadGeometry(gl);
 
   this.numSmallQuads = 3;
   this.smallQuads = [];
-  this.smallQuadPositions = [];
+
+
+
+  // shader/program set ups
+  this.vsTrafo2d = new Shader(gl, gl.VERTEX_SHADER, "idle_vs.essl");
+  this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "blue_fs.essl"); 
+  this.asteroidProgram = new Program(gl, this.vsTrafo2d, this.fsSolid);
+  this.bigQuadMaterial = new Material(gl, this.asteroidProgram);
+  this.smallQuadMaterial = new Material(gl, this.asteroidProgram);
+
+  //Game object set ups
+
+  this.bigQuadTexture = new Texture2D(gl, "js/res/boatTape.jpeg");
+  this.bigQuadMaterial.colorTexture.set(this.bigQuadTexture);
+  this.bigQuadMesh = new Mesh(this.quadGeometry, this.bigQuadMaterial);
+  this.bigQuadGameObject = new GameObject2D(this.bigQuadMesh);
+  this.bigQuadGameObject.scale = new Vec3(1/4,1/4,1/4);
+  this.bigQuadGameObject.updateModelTransformation();
+  this.bigQuadGameObject.move = function(dt, keysPressed){
+    if(keysPressed["DOWN"]){
+      this.position.y-=dt;
+    }
+    if(keysPressed["UP"]){
+      this.position.y+=dt;
+    }
+    if(keysPressed["LEFT"]){
+      this.position.x -= dt;
+    }
+    if(keysPressed["RIGHT"]){
+      this.position.x += dt;
+    }
+    this.updateModelTransformation();
+  }
+  this.gameObjects.push(this.bigQuadGameObject);
+
+ 
+
+  this.smallQuadTexture = new Texture2D(gl, "js/res/Blue_Bape.jpg");
+  this.smallQuadMaterial.colorTexture.set(this.smallQuadTexture);
+
   var x = 0;
-  var colors =     new Float32Array([
-  0.0,0.0,1.0,
-  0.0, 1.0, 0.0,
-  0.0, 1.0, 0.0,
-  0.0,0.0,1.0,
-  ]);
   for(i=0; i<this.numSmallQuads; i++){
-    this.smallQuads.push(new QuadGeometry(gl));
-    //console.log(this.smallQuadArray[i])
+    var smallQuadMesh = new Mesh(new QuadGeometry(gl), this.smallQuadMaterial);
+    var smallQuadObject = new GameObject2D(smallQuadMesh);
+    smallQuadObject.position = new Vec3(-.4+x, -0.5, 0);
+    smallQuadObject.scale = new Vec3(1/10,1/10,1/10);
+    smallQuadObject.updateModelTransformation();
+    this.smallQuads.push(smallQuadObject);
+    this.gameObjects.push(smallQuadObject);
 
-   // console.log(this.smallQuads[i].setColorBuffer);
-   this.smallQuads[i].setColorBuffer(colors);
-
-    this.smallQuadPositions.push({x:-.4+x, y:-0.5, z:0});
-    //console.log(this.smallQuadArray[i]);
     x+=.4
   }
 
-
-  // in constructor 
-  this.vsTrafo2d = new Shader(gl, gl.VERTEX_SHADER, "idle_vs.essl");
-  this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "color_fs.essl"); 
-  this.asteroidProgram = new Program(gl, this.vsTrafo2d, this.fsSolid);
-
-  //this.texture = new Texture2D(gl, "/Users/caiglencross/Desktop/Shots/Doughnuts.jpg");
+  
+  //this.texure.loaded();
 
   // vertex buffer
   // this.vertexBuffer = gl.createBuffer();
@@ -97,6 +130,10 @@ Scene.prototype.update = function(gl, keysPressed) {
   // // clear the screen
    gl.clear(gl.COLOR_BUFFER_BIT);
 
+   var timeAtThisFrame = new Date().getTime();
+   var dt = (timeAtThisFrame - this.timeAtLastFrame) / 1000.0;
+   this.timeAtLastFrame = timeAtThisFrame;
+
   // // set shader program to use
   // gl.useProgram(this.program);
   // // set vertex buffer to pipeline input
@@ -123,66 +160,86 @@ Scene.prototype.update = function(gl, keysPressed) {
   //   0 //< data starts at array start
   // );
 
-  var modelMatrixUniformLocation = gl.getUniformLocation(
-    this.asteroidProgram.glProgram, "modelMatrix");
-  if(modelMatrixUniformLocation == null) {
-    console.log("Could not find uniform modelMatrix.");
-  } else {
-    var modelMatrix = new Mat4().scale(.2).translate(this.quadPosition);
-    modelMatrix.commit(gl, modelMatrixUniformLocation);
-  }
-    
+  
 
-  var quadPositionLocation = gl.getUniformLocation(this.asteroidProgram.glProgram,"quadPosition");
-  if(quadPositionLocation < 0){
-    Console.log("Could Not Find Quad Position");
-  }else{
-    gl.uniform3f(quadPositionLocation,this.quadPosition.x, this.quadPosition.y, this.quadPosition.z);
-    if(keyboardMap["Down"]){
-      this.quadPosition.y-=.01;
-    }
-    if(keyboardMap["Up"]){
-      this.quadPosition.y+=.01;
-    }
-    if(keyboardMap["Left"]){
-      this.quadPosition.x-=.01;
-      this.quadRotation-=1;
-    }
-    if(keyboardMap["Right"]){
-      this.quadPosition.x+=.01;
-      this.quadRotation+=1;
+  // var quadPositionLocation = gl.getUniformLocation(this.asteroidProgram.glProgram,"quadPosition");
+  // if(quadPositionLocation < 0){
+  //   Console.log("Could Not Find Quad Position");
+  // }else{
+  //   gl.uniform3f(quadPositionLocation,this.quadPosition.x, this.quadPosition.y, this.quadPosition.z);
 
-    }
-  }
 
-  this.asteroidProgram.commit();
+
+    //camera motion
+    if (keysPressed["W"]){
+      this.camera.position.y += dt*10;
+    }
+    if (keysPressed["A"]){
+      this.camera.position.x -= dt*10
+    }
+    if (keysPressed["S"]){
+      this.camera.position.y -= dt*10;
+    }
+    if (keysPressed["D"]){
+      this.camera.position.x += dt*10;
+    }
+    this.camera.updateViewProjMatrix();
+
+
+  // }
+
+
+
+  //this.asteroidProgram.commit();
+
 
   // var textureUniformLocation = gl.getUniformLocation(
   // this.asteroidProgram.glProgram, "colorTexture");
   // if(modelMatrixUniformLocation == null) {
   //   console.log("Could not find uniform colorTexture.");
   // } else {
-  //   this.texture.commit(gl, textureUniformLocation, 0);
+  //   this.spongebobTexture.commit(gl, textureUniformLocation, 0);
   // }
+  // this.bigQuadMaterial.commit();
+  //console.log(this.quadGeometry.indexBuffer);
 
-  this.quadGeometry.draw();
+
+  //   var modelMatrixUniformLocation = gl.getUniformLocation(
+  //   this.asteroidProgram.glProgram, "modelMatrix");
+  // if(modelMatrixUniformLocation == null) {
+  //   console.log("Could not find uniform modelMatrix.");
+  // } else {
+  //   var modelMatrix = new Mat4().scale(Math.abs(Math.sin(this.quadScale)/7)+.2).rotate(this.quadRotation).translate(this.quadPosition);
+  //   modelMatrix.commit(gl, modelMatrixUniformLocation);
+  // }
+  // this.quadScale+=.06;
+  // this.quadGeometry.draw();
+
+
+  //this.bapeTexture.commit(gl, textureUniformLocation, 0);
+  //this.smallQuadMaterial.commit();
 
 
 
-  for(i=0; i<this.numSmallQuads; i++){
-    
-    xDiff = this.quadPosition.x - this.smallQuadPositions[i].x;
-    yDiff = this.quadPosition.y - this.smallQuadPositions[i].y;
 
-    this.smallQuadPositions[i].x+= xDiff/100;
-    this.smallQuadPositions[i].y+= yDiff/100;
 
-    modelMatrix = new Mat4().scale(.05).translate(this.smallQuadPositions[i]);
-    modelMatrix.commit(gl, modelMatrixUniformLocation);
 
-    this.smallQuads[i].draw();
-  }
   //gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
+
+for (var i = 0; i <= this.gameObjects.length -1; i++) {
+  //console.log(this.gameObjects[i]);
+  this.gameObjects[i].move(dt, keysPressed);
+}
+
+for (var i = 0; i <= this.gameObjects.length -1; i++) {
+  //console.log(this.gameObjects[i]);
+  this.gameObjects[i].draw(this.camera);
+}
+
 
 
 }
+
+
+
+

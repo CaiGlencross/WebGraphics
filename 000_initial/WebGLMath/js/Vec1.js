@@ -67,7 +67,7 @@ Vec1.random = function(minVal, maxVal) {
   var result = Object.create(Vec1.prototype);
   result.storage = new Float32Array(1);
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) ||( Number(maxVal).valueOf()-1) || 0) + 1;
   result.storage[0] = Math.random() * (maxa - mina) + mina;
   return result;
 };
@@ -82,7 +82,7 @@ Vec1.random = function(minVal, maxVal) {
  */
 Vec1.prototype.setRandom = function(minVal, maxVal) {
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) ||( Number(maxVal).valueOf()-1) || 0) + 1;
   this.storage[0] = Math.random() * (maxa - mina) + mina;
   return this;  
 };
@@ -100,7 +100,7 @@ Vec1.prototype.clamp = function(minVal, maxVal) {
   if(this.storage[0] < mina){
     this.storage[0] = mina;
   }
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf(0) || 1;
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf(0)-1) || 0) + 1;
   if(this.storage[0] > maxa){
     this.storage[0] = maxa;
   }
@@ -118,7 +118,7 @@ Vec1.prototype.clamp = function(minVal, maxVal) {
  */
 Vec1.prototype.setClamped = function(b, minVal, maxVal) {
   var mina = minVal && minVal.x || Number(minVal).valueOf(0) || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf(0) || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf(0)-1) || 0) + 1;
   if(b.storage[0] < mina){
     this.storage[0] = mina;
   } else if(b.storage[0] > maxa){
@@ -308,8 +308,8 @@ Vec1.prototype.setQuotient = function(b, c) {
  */
 Vec1.prototype.setScaled = function(a, s){
   this.storage[0] = a.x * s;
-  return this;  
-}
+  return this;
+};
 
 /**
  * @method setScaledByInverse
@@ -322,7 +322,7 @@ Vec1.prototype.setScaled = function(a, s){
 Vec1.prototype.setScaledByInverse = function(a, s){
   this.storage[0] = a.x / s;
   return this;  
-}
+};
 
 /**
  * @method dot
@@ -414,8 +414,8 @@ Vec1.prototype.setLengthOfVec4 = function(b) {
  * @method commit
  * @memberof Vec1.prototype  
  * @description Sets the value of the vector to a WebGL float uniform variable.
- * @param gl {WebGLRenderingContext}
- * @param uniformLocation {WebGLUniformLocation}
+ * @param {WebGLRenderingContext} gl - rendering context
+ * @param {WebGLUniformLocation} uniformLocation - location of the uniform variable in the currently used WebGL program
  */
 Vec1.prototype.commit = function(gl, uniformLocation){
   gl.uniform1fv(uniformLocation, this.storage);

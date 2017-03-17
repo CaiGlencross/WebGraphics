@@ -98,10 +98,10 @@ Vec2.random = function(minVal, maxVal) {
   var result = Object.create(Vec2.prototype);
   result.storage = new Float32Array(2);
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   result.storage[0] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.y || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   result.storage[1] = Math.random() * (maxa - mina) + mina;
   return result;
 };
@@ -116,10 +116,10 @@ Vec2.random = function(minVal, maxVal) {
  */
 Vec2.prototype.setRandom = function(minVal, maxVal) {
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   this.storage[0] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.y || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   this.storage[1] = Math.random() * (maxa - mina) + mina;
   return this;  
 };
@@ -141,11 +141,11 @@ Vec2.prototype.clamp = function(minVal, maxVal) {
   if(this.storage[1] < mina){
     this.storage[1] = mina;
   }
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(this.storage[0] > maxa){
     this.storage[0] = maxa;
   }
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(this.storage[1] > maxa){
     this.storage[1] = maxa;
   }
@@ -163,7 +163,7 @@ Vec2.prototype.clamp = function(minVal, maxVal) {
  */
 Vec2.prototype.setClamped = function(b, minVal, maxVal) {
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   if(b.storage[0] < mina){
     this.storage[0] = mina;
   } else if(b.storage[0] > maxa){
@@ -172,7 +172,7 @@ Vec2.prototype.setClamped = function(b, minVal, maxVal) {
     this.storage[0] = b.storage[0];
   }
   mina = minVal && minVal.y || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   if(b.storage[1] < mina){
     this.storage[1] = mina;
   } else if(b.storage[1] > maxa){
@@ -414,7 +414,7 @@ Vec2.prototype.setScaled = function(a, s){
   this.storage[0] = a.x * s;
   this.storage[1] = a.y * s;
   return this;  
-}
+};
 
 /**
  * @method setScaledByInverse
@@ -428,7 +428,7 @@ Vec2.prototype.setScaledByInverse = function(a, s){
   this.storage[0] = a.x / s;
   this.storage[1] = a.y / s;
   return this;  
-}
+};
 
 /**
  * @method length2
@@ -486,8 +486,8 @@ Vec2.prototype.direction = function() {
  */
 Vec2.prototype.setNormalized = function(b) {
   var l = b.length();
-  this.storage[0] = b.storage[0] / length;
-  this.storage[1] = b.storage[1] / length;
+  this.storage[0] = b.storage[0] / l;
+  this.storage[1] = b.storage[1] / l;
   return this;
 };
 
@@ -596,8 +596,8 @@ Vec2.prototype.xy00mul = function(m) {
  * @method commit
  * @memberof Vec2.prototype  
  * @description Sets the value of the vector to a WebGL vec2 uniform variable.
- * @param gl {WebGLRenderingContext}
- * @param uniformLocation {WebGLUniformLocation}
+ * @param {WebGLRenderingContext} gl - rendering context
+ * @param {WebGLUniformLocation} uniformLocation - location of the uniform variable in the currently used WebGL program
  */
 Vec2.prototype.commit = function(gl, uniformLocation){
   gl.uniform2fv(uniformLocation, this.storage);

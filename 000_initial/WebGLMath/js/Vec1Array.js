@@ -103,7 +103,7 @@ Vec1Array.prototype.dotAllVec2s = function(b, c) {
   var k=0;
   for(var i=0; i<this.storage.length; i++) {
     this.storage[i] = b.storage[j++] * c.storage[k] + b.storage[j++] * c.storage[k+1];
-    if(b == c.storage.length) {
+    if(b === c.storage.length) {
     	j = 0; k+=2;
     }
   }
@@ -126,7 +126,7 @@ Vec1Array.prototype.dotAllVec3s = function(b, c) {
   var k=0;
   for(var i=0; i<this.storage.length; i++) {
     this.storage[i] = b.storage[j++] * c.storage[k] + b.storage[j++] * c.storage[k+1] + b.storage[j++] * c.storage[k+2];
-    if(b == c.storage.length) {
+    if(b === c.storage.length) {
       j = 0; k+=3;
     }
   }
@@ -149,7 +149,7 @@ Vec1Array.prototype.dotAllVec4s = function(b, c) {
   var k=0;
   for(var i=0; i<this.storage.length; i++) {
     this.storage[i] = b.storage[j++] * c.storage[k] + b.storage[j++] * c.storage[k+1] + b.storage[j++] * c.storage[k+2] + b.storage[j++] * c.storage[k+3];
-    if(b == c.storage.length) {
+    if(b === c.storage.length) {
       j = 0; k+=4;
     }
   }
@@ -205,8 +205,8 @@ Vec1Array.prototype.lengthOfVec4 = function(b) {
  * @method commit
  * @memberof Vec1Array.prototype  
  * @description Sets the value of the vector array to a WebGL vec1 array uniform variable.
- * @param gl {WebGLRenderingContext}
- * @param uniformLocation {WebGLUniformLocation}
+ * @param {WebGLRenderingContext} gl - rendering context
+ * @param {WebGLUniformLocation} uniformLocation - location of the uniform variable in the currently used WebGL program
  */
 Vec1Array.prototype.commit = function(gl, uniformLocation){
   gl.uniform1fv(uniformLocation, this.storage);

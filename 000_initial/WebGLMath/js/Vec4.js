@@ -126,16 +126,16 @@ Vec4.random = function(minVal, maxVal) {
   var result = Object.create(Vec4.prototype);
   result.storage = new Float32Array(4);
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   result.storage[0] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.y || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   result.storage[1] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.z || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.z || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.z-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   result.storage[2] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.w || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.w || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.w-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   result.storage[3] = Math.random() * (maxa - mina) + mina;
   return result;
 };
@@ -150,16 +150,16 @@ Vec4.random = function(minVal, maxVal) {
  */
 Vec4.prototype.setRandom = function(minVal, maxVal) {
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   this.storage[0] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.y || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   this.storage[1] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.z || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.z || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.z-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   this.storage[2] = Math.random() * (maxa - mina) + mina;
   mina = minVal && minVal.w || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.w || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.w-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   this.storage[3] = Math.random() * (maxa - mina) + mina;
   return this;  
 };
@@ -189,19 +189,19 @@ Vec4.prototype.clamp = function(minVal, maxVal) {
   if(this.storage[3] < mina){
     this.storage[3] = mina;
   }  
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(this.storage[0] > maxa){
     this.storage[0] = maxa;
   }
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(this.storage[1] > maxa){
     this.storage[1] = maxa;
   }
-  maxa = maxVal && maxVal.z || Number(maxVal).valueOf() || 1;
+  maxa = maxVal && ((maxVal.z-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(this.storage[2] > maxa){
     this.storage[2] = maxa;
   }
-  maxa = maxVal && maxVal.w || Number(maxVal).valueOf() || 1;
+  maxa = maxVal && ((maxVal.w-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(this.storage[3] > maxa){
     this.storage[3] = maxa;
   }
@@ -219,7 +219,7 @@ Vec4.prototype.clamp = function(minVal, maxVal) {
  */
 Vec4.prototype.setClamped = function(b, minVal, maxVal) {
   var mina = minVal && minVal.x || Number(minVal).valueOf() || 0;
-  var maxa = maxVal && maxVal.x || Number(maxVal).valueOf() || 1;  
+  var maxa = maxVal && ((maxVal.x-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   if(b.storage[0] < mina){
     this.storage[0] = mina;
   } else if(b.storage[0] > maxa){
@@ -228,7 +228,7 @@ Vec4.prototype.setClamped = function(b, minVal, maxVal) {
     this.storage[0] = b.storage[0];
   }
   mina = minVal && minVal.y || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.y || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.y-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   if(b.storage[1] < mina){
     this.storage[1] = mina;
   } else if(b.storage[1] > maxa){
@@ -237,7 +237,7 @@ Vec4.prototype.setClamped = function(b, minVal, maxVal) {
     this.storage[1] = b.storage[1];
   }
   mina = minVal && minVal.z || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.z || Number(maxVal).valueOf() || 1;  
+  maxa = maxVal && ((maxVal.z-1) || (Number(maxVal).valueOf()-1) || 0) + 1;  
   if(b.storage[2] < mina){
     this.storage[2] = mina;
   } else if(b.storage[2] > maxa){
@@ -246,7 +246,7 @@ Vec4.prototype.setClamped = function(b, minVal, maxVal) {
     this.storage[2] = b.storage[2];
   }
   mina = minVal && minVal.w || Number(minVal).valueOf() || 0;
-  maxa = maxVal && maxVal.w || Number(maxVal).valueOf() || 1;
+  maxa = maxVal && ((maxVal.w-1) || (Number(maxVal).valueOf()-1) || 0) + 1;
   if(b.storage[3] < mina){
     this.storage[3] = mina;
   } else if(b.storage[3] > maxa){
@@ -514,8 +514,8 @@ Vec4.prototype.setScaled = function(a, s){
   this.storage[1] = a.y * s;
   this.storage[2] = a.z * s;  
   this.storage[3] = a.w * s;
-  return this;  
-}
+  return this;
+};
 
 /**
  * @method setScaledByInverse
@@ -531,7 +531,7 @@ Vec4.prototype.setScaledByInverse = function(a, s){
   this.storage[2] = a.z / s;  
   this.storage[3] = a.w / s;
   return this;  
-}
+};
 
 /**
  * @method length2
@@ -687,8 +687,8 @@ Vec4.prototype.setTransformed = function(v, m) {
  * @method commit
  * @memberof Vec4.prototype  
  * @description Sets the value of the vector to a WebGL vec4 uniform variable.
- * @param gl {WebGLRenderingContext}
- * @param uniformLocation {WebGLUniformLocation}
+ * @param {WebGLRenderingContext} gl - rendering context
+ * @param {WebGLUniformLocation} uniformLocation - location of the uniform variable in the currently used WebGL program
  */
 Vec4.prototype.commit = function(gl, uniformLocation){
   gl.uniform4fv(uniformLocation, this.storage);

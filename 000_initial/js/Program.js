@@ -9,10 +9,29 @@ var Program = function(gl, vertexShader, fragmentShader) {
   gl.bindAttribLocation(this.glProgram, 1, 'vertexNormal');  
   gl.bindAttribLocation(this.glProgram, 2, 'vertexTexCoord');  
   gl.bindAttribLocation(this.glProgram, 3, 'vertexColor');
+  
   gl.linkProgram(this.glProgram); 
+
+
   if (!gl.getProgramParameter(this.glProgram, gl.LINK_STATUS)) { 
     throw new Error('Could not link shaders [vertex shader:' + vertexShader.sourceFileName +
                                          ']:[fragment shader: ' + fragmentShader.sourceFileName + ']\n' + gl.getProgramInfoLog(this.glProgram)); 
+  }
+
+  var textureUnitCount=0; 
+  this.uniforms = {}; 
+  var nUniforms = gl.getProgramParameter(
+               this.glProgram, gl.ACTIVE_UNIFORMS); 
+  for(var i=0; i<nUniforms; i++){ 
+    var glUniform = gl.getActiveUniform(this.glProgram, i); 
+    var uniform = { 
+      type      : glUniform.type, 
+      arraySize : glUniform.size || 1, 
+      location  : gl.getUniformLocation(
+                         this.glProgram, glUniform.name) 
+    }; 
+    // TODO: number samplers (give them texture unit indices)
+    this.uniforms[glUniform.name.split('[')[0]] = uniform; 
   }
   }; 
   Program.prototype.commit = function(){ 

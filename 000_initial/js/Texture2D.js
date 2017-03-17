@@ -1,7 +1,6 @@
 var Texture2D = function(gl, mediaFileUrl) { 
-	console.log(gl.pendingResources);
-  gl.pendingResources[mediaFileUrl] =
-             ++gl.pendingResources[mediaFileUrl] || 1; 
+  pendingResources[mediaFileUrl] =
+             ++pendingResources[mediaFileUrl] || 1; 
   this.mediaFileUrl = mediaFileUrl; 
   this.glTexture = gl.createTexture(); 
   this.image = new Image(); 
@@ -20,8 +19,8 @@ Texture2D.prototype.loaded = function(gl){
                                   gl.LINEAR_MIPMAP_LINEAR); 
   gl.generateMipmap(gl.TEXTURE_2D); 
   gl.bindTexture(gl.TEXTURE_2D, null); 
-  if( --gl.pendingResources[this.mediaFileUrl] === 0 ) { 
-    delete gl.pendingResources[this.mediaFileUrl]; 
+  if( --pendingResources[this.mediaFileUrl] === 0 ) { 
+    delete pendingResources[this.mediaFileUrl]; 
   } 
 };
 
